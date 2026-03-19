@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   Design Tokens — Professional Dark Theme
+   ═══════════════════════════════════════════════ */
+:root {
+  --bg-page:       #0f1117;
+  --bg-sidebar:    #13151f;
+  --bg-card:       #1a1d2e;
+  --bg-card-hover: #1f2235;
+  --border-card:   rgba(255,255,255,0.08);
+  --border-subtle: rgba(255,255,255,0.05);
+  --text-primary:  #f0f2ff;
+  --text-secondary:#8b90a7;
+  --text-muted:    #5a5f7a;
+  --accent-blue:   #6c8aff;
+  --accent-cyan:   #38bdf8;
+  --accent-purple: #a78bfa;
+  --accent-emerald:#34d399;
+  --accent-amber:  #fbbf24;
+}
+
+@layer base {
+  html { color-scheme: dark light; }
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  html.dark body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+  }
+}
+
+@layer components {
+  /* ─── Card ─────────────────────────────────── */
+  .card {
+    @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300;
+    /* Light mode */
+    @apply bg-white border border-slate-100 shadow-sm;
+    @apply hover:shadow-lg hover:-translate-y-1;
+  }
+  html.dark .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    box-shadow: 0 4px 24px -4px rgba(0,0,0,0.5);
+  }
+  html.dark .card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(108,138,255,0.25);
+    box-shadow:
+      0 0 0 1px rgba(108,138,255,0.15),
+      0 12px 40px -8px rgba(0,0,0,0.6);
+    transform: translateY(-3px);
+  }
+
+  /* ─── Buttons ──────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold tracking-wide transition-all duration-200
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50
+           active:scale-[0.97];
+  }
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 shadow-md;
+    html.dark & {
+      background: var(--accent-blue);
+      box-shadow: 0 4px 16px rgba(108,138,255,0.35);
+    }
+  }
+  .btn-outline {
+    @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50;
+    html.dark & {
+      background: rgba(255,255,255,0.06);
+      border-color: var(--border-card);
+      color: #d0d4f0;
+    }
+    html.dark &:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.15);
+    }
+  }
+
+  /* ─── Input ────────────────────────────────── */
+  .input {
+    @apply flex w-full rounded-xl border px-4 py-3 text-sm transition-all duration-200
+           placeholder:text-slate-400 focus:outline-none focus:ring-2
+           disabled:opacity-50;
+    @apply bg-white border-slate-200 text-slate-800 focus:border-blue-400 focus:ring-blue-400/20;
+    html.dark & {
+      background: rgba(255,255,255,0.06);
+      border-color: var(--border-card);
+      color: var(--text-primary);
+    }
+    html.dark &::placeholder { color: var(--text-muted); }
+    html.dark &:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(108,138,255,0.2);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Dark Sidebar
+   ═══════════════════════════════════════════════ */
+html.dark .sidebar {
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+}
+
+/* ═══════════════════════════════════════════════
+   Text utilities (force visible in dark mode)
+   ═══════════════════════════════════════════════ */
+html.dark .dark-title   { color: var(--text-primary) !important; }
+html.dark .dark-body    { color: #c5c9e0 !important; }
+html.dark .dark-muted   { color: var(--text-secondary) !important; }
+html.dark .dark-label   { color: #8b90a7 !important; }
+
+/* ═══════════════════════════════════════════════
+   Scrollbar
+   ═══════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+/* ═══════════════════════════════════════════════
+   Selection
+   ═══════════════════════════════════════════════ */
+::selection {
+  background: rgba(108,138,255,0.3);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════
+   Charts — force readability
+   ═══════════════════════════════════════════════ */
+html.dark .recharts-cartesian-grid line {
+  stroke: rgba(255,255,255,0.06) !important;
+}
+html.dark .recharts-text,
+html.dark .recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary) !important;
+}
+
+/* Recharts Legend in dark */
+html.dark .recharts-legend-item-text {
+  color: #c5c9e0 !important;
+}
+
+/* Tooltip */
+.recharts-tooltip-wrapper,
+.recharts-default-tooltip {
+  border: none !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  outline: none !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+html.dark .recharts-default-tooltip {
+  background: #1f2235 !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+html.dark .recharts-tooltip-label {
+  color: var(--text-primary) !important;
+  font-weight: 700 !important;
+  margin-bottom: 4px !important;
+}
+html.dark .recharts-tooltip-item {
+  color: #c5c9e0 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════════
+   Table
+   ═══════════════════════════════════════════════ */
+html.dark .table-divider { border-color: rgba(255,255,255,0.05) !important; }
+
+/* ═══════════════════════════════════════════════
+   Accent color utilities for use in JSX
+   ═══════════════════════════════════════════════ */
+.accent-blue   { color: var(--accent-blue); }
+.accent-cyan   { color: var(--accent-cyan); }
+.accent-purple { color: var(--accent-purple); }
+.accent-emerald{ color: var(--accent-emerald); }
+.accent-amber  { color: var(--accent-amber); }
+
+/* ═══════════════════════════════════════════════
+   Animations
+   ═══════════════════════════════════════════════ */
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.tap-effect { @apply active:scale-95 transition-transform; }
+
+/* ═══════════════════════════════════════════════
+   Native <select> / <option> Dark Mode
+   ═══════════════════════════════════════════════ */
+html.dark select {
+  background-color: #1a1d2e !important;
+  color: #c5c9e0 !important;
+  color-scheme: dark;
+}
+html.dark select option {
+  background-color: #1a1d2e !important;
+  color: #c5c9e0 !important;
+}
+html.dark select option:checked {
+  background-color: rgba(108,138,255,0.2) !important;
+}
+
+/* ═══════════════════════════════════════════════
+   Ping animation — status badge pulse dot
+   ═══════════════════════════════════════════════ */
+@keyframes ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+.animate-ping {
+  animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
