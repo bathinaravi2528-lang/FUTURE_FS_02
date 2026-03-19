@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: mini-crm-backend
+    name: future-fs-02-backend
     env: node
     buildCommand: npm install
     startCommand: npm start
@@ -14,3 +14,5 @@ services:
         value: 30d
       - key: PORT
         value: 5000
+      - key: ALLOWED_ORIGIN
+        value: https://future-fs-02-coral-zeta.vercel.app
