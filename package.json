@@ -1,10 +1,14 @@
 {
   "name": "mini-crm",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Mini CRM with premium theme and data export features",
+  "main": "backend/server.js",
   "scripts": {
+    "start": "node backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "keywords": [],
   "author": "",
