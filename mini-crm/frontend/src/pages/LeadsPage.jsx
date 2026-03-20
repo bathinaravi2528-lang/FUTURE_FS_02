@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Filter, Edit, Trash2, MessageSquare, Mail, Briefcase, Calendar, ChevronRight, MousePointer2, Users } from 'lucide-react';
+import { Search, Plus, Filter, Edit, Trash2, MessageSquare, Mail, Briefcase, Calendar, ChevronRight, MousePointer2, Users, Download } from 'lucide-react';
 import { getLeads, createLead, updateLead, deleteLead } from '../api/leadService';
 import StatusBadge from '../components/StatusBadge';
 import LeadModal from '../components/LeadModal';
@@ -105,6 +105,35 @@ const LeadsPage = () => {
     setIsNoteModalOpen(true);
   };
 
+  const exportToCSV = () => {
+    if (filteredLeads.length === 0) {
+      toast.error('No leads to export');
+      return;
+    }
+    
+    const headers = ['Name', 'Email', 'Source', 'Status', 'Created At'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredLeads.map(lead => [
+        `"${(lead.name || '').replace(/"/g, '""')}"`,
+        `"${(lead.email || '').replace(/"/g, '""')}"`,
+        `"${(lead.source || 'Inbound').replace(/"/g, '""')}"`,
+        `"${(lead.status || '').replace(/"/g, '""')}"`,
+        `"${new Date(lead.created_at).toLocaleDateString()}"`
+      ].join(','))
+    ].join('\\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Leads exported successfully');
+  };
+
   if (loading && leads.length === 0) {
     return (
        <div className="flex h-96 w-full items-center justify-center">
@@ -128,18 +157,30 @@ const LeadsPage = () => {
           <h1 className="text-3xl font-black font-display tracking-tight" style={{ color: TITLE }}>Manage Leads</h1>
           <p className="text-sm font-medium" style={{ color: BODY }}>Track and nurture your business prospects.</p>
         </div>
-        {isAdmin && (
+        <div className="flex items-center gap-3">
           <motion.button
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => { setSelectedLead(null); setIsLeadModalOpen(true); }}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold text-sm shadow-lg"
-            style={{ background: 'linear-gradient(135deg,#6c8aff,#4f6ef7)', boxShadow: '0 4px 16px rgba(108,138,255,0.35)' }}
+            onClick={exportToCSV}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm shadow-sm transition-all"
+            style={{ background: INPUT_BG, border: `1px solid ${INPUT_BORD}`, color: INPUT_TEXT }}
           >
-            <Plus className="w-5 h-5" />
-            Add New Lead
+            <Download className="w-5 h-5" />
+            Export CSV
           </motion.button>
-        )}
+          {isAdmin && (
+            <motion.button
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => { setSelectedLead(null); setIsLeadModalOpen(true); }}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold text-sm shadow-lg"
+              style={{ background: 'linear-gradient(135deg,#6c8aff,#4f6ef7)', boxShadow: '0 4px 16px rgba(108,138,255,0.35)' }}
+            >
+              <Plus className="w-5 h-5" />
+              Add New Lead
+            </motion.button>
+          )}
+        </div>
       </header>
 
       {/* ── Search & Filter ── */}
