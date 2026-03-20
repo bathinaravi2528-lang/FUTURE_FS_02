@@ -45,6 +45,28 @@ function createTables() {
                     [defaultAdmin, defaultEmail, hash, defaultSource]);
             }
         });
+
+        // Seed some initial leads if table is empty
+        db.get(`SELECT COUNT(*) as count FROM leads`, (err, row) => {
+            if (row && row.count === 0) {
+                const dummyLeads = [
+                    ['John Doe', 'john@example.com', '1234567890', 'Website', 'new', 'Initially signed up'],
+                    ['Jane Smith', 'jane@linkedin.com', '9876543210', 'LinkedIn', 'contacted', 'Interested in the product'],
+                    ['Robert Brown', 'robert@direct.com', '5551234567', 'Direct', 'converted', 'Already signed contract'],
+                    ['Lisa White', 'lisa@ref.com', '4449876543', 'Referral', 'new', 'Referred by Alex'],
+                    ['Michael Green', 'michael@ads.com', '2223334444', 'Ads', 'contacted', 'Clicked on Facebook ad'],
+                    ['Sarah Black', 'sarah@link.com', '1112223333', 'LinkedIn', 'new', 'Found us on LinkedIn search'],
+                    ['Kevin Blue', 'kevin@web.com', '9998887777', 'Website', 'converted', 'High value lead'],
+                    ['Amy Yellow', 'amy@ref.com', '7776665555', 'Referral', 'contacted', 'Second follow-up'],
+                    ['Tom Grey', 'tom@direct.com', '3334445555', 'Direct', 'new', 'Walk-in lead'],
+                    ['Emily Red', 'emily@link.com', '6665554444', 'LinkedIn', 'converted', 'Success story']
+                ];
+                dummyLeads.forEach(l => {
+                    db.run(`INSERT INTO leads (name, email, phone, source, status, notes) VALUES (?, ?, ?, ?, ?, ?)`, l);
+                });
+                console.log('Seeded 10 dummy leads.');
+            }
+        });
     });
 }
 
