@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "public": "frontend",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://YOUR_BACKEND_URL.onrender.com/api/$1" }
+  ]
+}
