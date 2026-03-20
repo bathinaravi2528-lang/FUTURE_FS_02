@@ -1,0 +1,35 @@
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.production
+
+# Node modules
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# SQLite database (contains real data)
+*.sqlite
+*.sqlite3
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor directories
+.vscode/
+.idea/
+
+# Vite cache
+frontend/.vite/
+
+# Misc
+probe_mysql.js
