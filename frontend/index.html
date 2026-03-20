@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini CRM Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-main">
+    <!-- AUTH SECTION -->
+    <div id="auth-container" class="login-container">
+        <!-- LOGIN CARD -->
+        <div id="login-card" class="login-card glass animate">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="admin123" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Don't have an account? <a href="#" onclick="toggleAuth(true)" style="color: var(--primary); text-decoration: none;">Register</a>
+                </p>
+            </form>
+            <p id="login-error" style="color: #ef4444; font-size: 0.875rem; text-align: center; margin-top: 1rem; display: none;">Invalid credentials. Please try again.</p>
+        </div>
+
+        <!-- REGISTER CARD -->
+        <div id="register-card" class="login-card glass animate" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Create Account</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-source">How did you hear about us?</label>
+                    <select id="reg-source">
+                        <option value="Google">Google Search</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Friend">Friend Recommendations</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Already have an account? <a href="#" onclick="toggleAuth(false)" style="color: var(--primary); text-decoration: none;">Login</a>
+                </p>
+            </form>
+            <p id="register-success" style="color: #10b981; font-size: 0.875rem; text-align: center; margin-top: 1rem; display: none;">Account created! Redirecting to login...</p>
+            <p id="register-error" style="color: #ef4444; font-size: 0.875rem; text-align: center; margin-top: 1rem; display: none;">Registration failed. Email might be already in use.</p>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="admin-section" style="display: none;">
+        <nav class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem;">
+            <div class="logo" style="font-weight: 800; font-size: 1.5rem;">MINI <span style="color: var(--primary);">CRM</span></div>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #020617;" id="admin-initials">A</div>
+                    <span id="admin-name" style="font-weight: 600;">Admin</span>
+                </div>
+                <button onclick="logout()" class="btn btn-glass btn-sm">Sign Out</button>
+            </div>
+        </nav>
+
+        <main class="container">
+            <!-- Navigation Tabs -->
+            <div style="display: flex; gap: 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0px;">
+                <button onclick="showView('dashboard-view')" id="tab-dashboard" class="tab-btn active" style="background: none; border: none; color: var(--text); font-weight: 600; cursor: pointer; padding: 0.75rem 1rem; position: relative;">Dashboard</button>
+                <button onclick="showView('leads-view')" id="tab-leads" class="tab-btn" style="background: none; border: none; color: var(--text-muted); font-weight: 600; cursor: pointer; padding: 0.75rem 1rem; position: relative;">Leads Management</button>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <div id="dashboard-view" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="page-title" style="margin: 0;">Business Dashboard</h2>
+                    <button onclick="exportCSV()" class="btn btn-glass btn-sm" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="download" style="width: 16px;"></i> Export CSV
+                    </button>
+                </div>
+                <!-- Overview Stats -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+                    <div class="glass animate" style="padding: 1.5rem; border-left: 4px solid var(--primary);">
+                        <p style="color: var(--text-muted); font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Total Leads</p>
+                        <h2 id="total-leads" style="font-size: 2.5rem; font-weight: 800; margin: 0;">0</h2>
+                    </div>
+                    <div class="glass animate" style="padding: 1.5rem; border-left: 4px solid #6366f1; animation-delay: 0.1s;">
+                        <p style="color: var(--text-muted); font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">New</p>
+                        <h2 id="new-leads" style="font-size: 2.5rem; font-weight: 800; margin: 0; color: #6366f1;">0</h2>
+                    </div>
+                    <div class="glass animate" style="padding: 1.5rem; border-left: 4px solid #f59e0b; animation-delay: 0.2s;">
+                        <p style="color: var(--text-muted); font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Contacted</p>
+                        <h2 id="contacted-leads" style="font-size: 2.5rem; font-weight: 800; margin: 0; color: #f59e0b;">0</h2>
+                    </div>
+                    <div class="glass animate" style="padding: 1.5rem; border-left: 4px solid #10b981; animation-delay: 0.3s;">
+                        <p style="color: var(--text-muted); font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Converted</p>
+                        <h2 id="converted-leads" style="font-size: 2.5rem; font-weight: 800; margin: 0; color: #10b981;">0</h2>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+                    <div class="glass animate" style="padding: 1.5rem; animation-delay: 0.1s; height: 350px;">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted);">Lead Status Distribution</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass animate" style="padding: 1.5rem; animation-delay: 0.2s; height: 350px;">
+                        <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-muted);">Lead Join Activity (Daily)</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="dailyBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Leads Summary -->
+                <div class="glass animate" style="padding: 1.5rem; animation-delay: 0.3s; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="font-size: 1.1rem;">Recent Leads</h3>
+                        <button onclick="showView('leads-view')" class="btn btn-glass btn-sm" style="font-size: 0.75rem;">View All Leads</button>
+                    </div>
+                    <div class="crm-table-container">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border); color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem;">
+                                    <th style="padding: 0.75rem 1rem;">Name</th>
+                                    <th style="padding: 0.75rem 1rem;">Email</th>
+                                    <th style="padding: 0.75rem 1rem;">Status</th>
+                                    <th style="padding: 0.75rem 1rem;">Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-leads-list">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEADS VIEW -->
+            <div id="leads-view" class="view-section" style="display: none;">
+                <!-- Leads Management -->
+                <div class="leads-container glass animate" style="padding: 2rem; animation-delay: 0.1s;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <div>
+                            <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">Lead Management</h2>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">View and manage your business pipeline.</p>
+                        </div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div style="position: relative;">
+                                <i data-lucide="search" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; color: var(--text-muted);"></i>
+                                <input type="text" id="search-input" placeholder="Search..." style="padding: 0.6rem 0.6rem 0.6rem 2.5rem; border-radius: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; width: 250px;">
+                            </div>
+                            <button onclick="openAddLeadModal()" class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="plus" style="width: 18px;"></i> Add Lead
+                            </button>
+                        </div>
+                    </div>
+
+                <div class="crm-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact Info</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-list">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                    <div id="loading" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading leads...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Note Modal -->
+    <div id="note-modal" class="modal-overlay">
+        <div class="modal-content glass animate">
+            <h2 id="modal-title" style="margin-bottom: 1.5rem;">Edit Lead</h2>
+            <form id="edit-lead-form">
+                <input type="hidden" id="edit-lead-id">
+                <div class="form-group">
+                    <label for="edit-status">Status</label>
+                    <select id="edit-status">
+                        <option value="new">New</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="converted">Converted</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-notes">Notes</label>
+                    <textarea id="edit-notes" rows="6"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                    <button type="button" onclick="toggleModal('note-modal')" class="btn btn-glass">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div id="add-lead-modal" class="modal-overlay">
+        <div class="modal-content glass animate">
+            <h2 style="margin-bottom: 1.5rem;">Add New Lead</h2>
+            <form id="add-lead-form">
+                <div class="form-group">
+                    <label for="add-name">Full Name</label>
+                    <input type="text" id="add-name" required placeholder="Enter lead name">
+                </div>
+                <div class="form-group">
+                    <label for="add-email">Email Address</label>
+                    <input type="email" id="add-email" required placeholder="lead@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="add-phone">Phone Number</label>
+                    <input type="tel" id="add-phone" placeholder="+1 (555) 000-0000">
+                </div>
+                <div class="form-group">
+                    <label for="add-source">Source</label>
+                    <input type="text" id="add-source" value="Manual Entry">
+                </div>
+                <div class="form-group">
+                    <label for="add-notes">Initial Notes</label>
+                    <textarea id="add-notes" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Lead</button>
+                    <button type="button" onclick="toggleModal('add-lead-modal')" class="btn btn-glass">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
