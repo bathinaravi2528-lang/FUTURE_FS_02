@@ -1,5 +1,6 @@
 services:
   - type: web
+    rootDirectory: .
     name: future-fs-02-backend
     env: node
     buildCommand: npm install
