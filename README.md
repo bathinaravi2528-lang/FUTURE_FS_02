@@ -1,6 +1,6 @@
-# FUTURE_FS_02 - Mini CRM
+# FUTURE_FS_02 - LeadSync
 
-A premium, full-stack Mini CRM application built with Node.js, Express, and SQLite.
+A premium, full-stack LeadSync application built with Node.js, Express, and SQLite.
 
 ## ✨ Features
 - **Modern Premium Theme**: A dark, vibrant Slate & Neon Indigo design with glassmorphism and smooth animations.
