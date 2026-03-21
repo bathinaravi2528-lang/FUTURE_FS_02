@@ -40,13 +40,13 @@ const authenticate = (req, res, next) => {
 
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', (req, res) => {
-    const { username, email, password, source } = req.body;
-    if (!username || !email || !password) return res.status(400).send('Missing fields');
+    const { username, email, password, phone, source } = req.body;
+    if (!username || !email || !password || !phone) return res.status(400).send('Missing fields');
     const hash = bcrypt.hashSync(password, 10);
     
     // 1. Create User (email is unique)
-    db.run(`INSERT INTO users (username, email, password, source) VALUES (?, ?, ?, ?)`, 
-        [username, email, hash, source || 'Direct'], 
+    db.run(`INSERT INTO users (username, email, password, phone, source) VALUES (?, ?, ?, ?, ?)`, 
+        [username, email, hash, phone, source || 'Direct'], 
         function(err) {
             if (err) {
                 if (err.message.includes('UNIQUE constraint failed: users.email')) {
@@ -56,14 +56,14 @@ app.post('/api/auth/register', (req, res) => {
             }
             
             // 2. Also create a Lead for this user
-            db.run(`INSERT INTO leads (name, email, source, status, notes) VALUES (?, ?, ?, ?, ?)`,
-                [username, email, source || 'Registration', 'new', 'Added automatically upon registration'],
+            db.run(`INSERT INTO leads (name, email, phone, source, status, notes) VALUES (?, ?, ?, ?, ?, ?)`,
+                [username, email, phone, source || 'Registration', 'new', 'Added automatically upon registration'],
                 (leadErr) => {
                     if (leadErr) console.error('Error creating automatic lead:', leadErr.message);
                 }
             );
             
-            res.status(201).json({ id: this.lastID });
+            res.status(201).json({ id: this.lastID, message: 'User registered successfully' });
         }
     );
 });

@@ -40,13 +40,14 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     const username = document.getElementById('reg-username').value;
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
+    const phone = document.getElementById('reg-phone').value;
     const source = document.getElementById('reg-source').value;
 
     try {
         const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password, source })
+            body: JSON.stringify({ username, email, password, phone, source })
         });
 
         if (response.ok) {
