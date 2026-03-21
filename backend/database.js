@@ -62,10 +62,13 @@ function createTables() {
                     ['Tom Grey', 'tom@direct.com', '3334445555', 'Direct', 'new', 'Walk-in lead'],
                     ['Emily Red', 'emily@link.com', '6665554444', 'LinkedIn', 'converted', 'Success story']
                 ];
-                dummyLeads.forEach(l => {
-                    db.run(`INSERT INTO leads (name, email, phone, source, status, notes) VALUES (?, ?, ?, ?, ?, ?)`, l);
+                let promises = dummyLeads.map((l, index) => {
+                    return new Promise(resolve => {
+                        let daysAgo = dummyLeads.length - index;
+                        db.run(`INSERT INTO leads (name, email, phone, source, status, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now', '-${daysAgo} days'))`, l, resolve);
+                    });
                 });
-                console.log('Seeded 10 dummy leads.');
+                Promise.all(promises).then(() => console.log('Seeded 10 dummy leads with historical dates.'));
             }
         });
     });
