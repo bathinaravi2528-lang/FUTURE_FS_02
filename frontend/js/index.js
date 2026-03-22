@@ -197,8 +197,37 @@ function updateDashboardCharts(data) {
     });
 
     // 2. BAR CHART - Daily Joins
-    const dailyLabels = data.dailyStats.map(s => s.date);
-    const dailyCounts = data.dailyStats.map(s => s.count);
+    let dailyLabels = [];
+    let dailyCounts = [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let startDate = new Date();
+    startDate.setDate(today.getDate() - 6); // Default: Last 7 days
+
+    if (data.dailyStats && data.dailyStats.length > 0) {
+        const firstDataDate = new Date(data.dailyStats[0].date);
+        if (firstDataDate < startDate) {
+            startDate = firstDataDate;
+        }
+    }
+
+    const dataMap = {};
+    (data.dailyStats || []).forEach(s => dataMap[s.date] = s.count);
+
+    let currentDate = new Date(startDate);
+    while (currentDate <= today) {
+        const yyyy = currentDate.getFullYear();
+        const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(currentDate.getDate()).padStart(2, '0');
+        const formattedDate = `${yyyy}-${mm}-${dd}`;
+        
+        dailyLabels.push(formattedDate);
+        dailyCounts.push(dataMap[formattedDate] || 0);
+
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
 
     if (dailyBarChart) dailyBarChart.destroy();
     dailyBarChart = new Chart(dailyBarCtx, {
