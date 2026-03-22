@@ -203,11 +203,13 @@ function updateDashboardCharts(data) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    let startDate = new Date();
+    let startDate = new Date(today);
     startDate.setDate(today.getDate() - 6); // Default: Last 7 days
 
     if (data.dailyStats && data.dailyStats.length > 0) {
-        const firstDataDate = new Date(data.dailyStats[0].date);
+        // We append 'T00:00:00' to parse it safely as local day instead of UTC, avoiding offset shift
+        const firstDataDate = new Date(data.dailyStats[0].date + "T00:00:00");
+        firstDataDate.setHours(0,0,0,0);
         if (firstDataDate < startDate) {
             startDate = firstDataDate;
         }
